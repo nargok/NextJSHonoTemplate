@@ -19,6 +19,7 @@
       }
     ],
     "paths": {
+      "@apps/backend/*": ["../backend/src/*"],
       "@/*": ["./src/*"]
     }
   },
