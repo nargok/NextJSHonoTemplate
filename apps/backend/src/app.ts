@@ -12,7 +12,7 @@ app.use('*', logger());
 const employeeController = container.resolve(EmployeeController);
 
 // ルーティングを設定
-app.route('/employees', employeeController.getRouter());
+const route = app.get('/employees', ...employeeController.getEmployeesHandler);
 
 // Error handling
 app.notFound((c) => {
@@ -24,6 +24,6 @@ app.onError((err, c) => {
   return c.json({ error: 'Internal Server Error' }, 500);
 });
 
-type AppType = typeof app.routes;
+type AppType = typeof route;
 
 export { app, type AppType };

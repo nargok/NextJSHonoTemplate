@@ -12,25 +12,19 @@ type QuerySchema = z.infer<typeof querySchema>;
 
 @injectable()
 export class EmployeeController {
-  private app = new Hono();
+  constructor(@inject(EmployeesUsecase) private usecase: EmployeesUsecase) {}
 
-  constructor(@inject(EmployeesUsecase) private usecase: EmployeesUsecase) {
-    this.app.get('/', zValidator('query', querySchema), this.getEmployees.bind(this));
-  }
-
-  getRouter() {
-    return this.app;
-  }
-
-  async getEmployees(context: Context) {
-    try {
-      const data = context.req.query() as QuerySchema;
-      const employees = await this.usecase.getEmployees(data);
-
-      return context.json(employees, 200);
-    } catch (err) {
-      console.error('Error in getEmployees', err);
-      return context.json({ error: 'Failed to get employees' }, 500);
-    }
-  }
+  public getEmployeesHandler = [
+    zValidator('query', querySchema),
+    async (context: Context) => {
+      try {
+        const data = context.req.query() as QuerySchema;
+        const employees = await this.usecase.getEmployees(data);
+        return context.json(employees, 200);
+      } catch (err) {
+        console.error('Error in getEmployees', err);
+        return context.json({ error: 'Failed to get employees' }, 500);
+      }
+    },
+  ] as const;
 }
