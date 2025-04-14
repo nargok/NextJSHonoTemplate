@@ -9,6 +9,8 @@
     "types": ["@cloudflare/workers-types/2023-07-01"],
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "paths": {
       "@/*": ["./src/*"]
     }

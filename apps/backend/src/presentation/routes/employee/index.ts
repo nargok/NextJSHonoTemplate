@@ -1,22 +1,30 @@
-import { Hono } from 'hono';
+import { Context, Hono } from 'hono';
 import { z } from 'zod';
 import { zValidator } from '@hono/zod-validator';
-import { GetEmployeesUsecase } from '@/application/employee/usecase';
-import { EmployeeRepository } from '@/infrastructure/employee';
+import { EmployeesUsecase } from '@/application/employee/usecase';
+import { inject, injectable } from 'tsyringe';
 
-export const employees = new Hono().get(
-  '/employees',
-  zValidator(
-    'query',
-    z.object({
-      status: z.union([z.literal('active'), z.literal('inactive')]).optional(),
-    }),
-  ),
-  async (context) => {
-    const data = context.req.valid('query');
-    const usecase = new GetEmployeesUsecase(new EmployeeRepository());
-    const employees = await usecase.execute(data);
+const querySchema = z.object({
+  status: z.union([z.literal('active'), z.literal('inactive')]).optional(),
+});
 
-    return context.json(employees, 200);
-  },
-);
+type QuerySchema = z.infer<typeof querySchema>;
+
+@injectable()
+export class EmployeeController {
+  constructor(@inject(EmployeesUsecase) private usecase: EmployeesUsecase) {}
+
+  public getEmployeesHandler = [
+    zValidator('query', querySchema),
+    async (context: Context) => {
+      try {
+        const data = context.req.query() as QuerySchema;
+        const employees = await this.usecase.getEmployees(data);
+        return context.json(employees, 200);
+      } catch (err) {
+        console.error('Error in getEmployees', err);
+        return context.json({ error: 'Failed to get employees' }, 500);
+      }
+    },
+  ] as const;
+}

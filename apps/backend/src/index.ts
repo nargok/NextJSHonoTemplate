@@ -1,14 +1,9 @@
 import { Hono } from 'hono';
-import { employees } from '@/presentation/routes/employee';
 
 const app = new Hono();
-
-const routes = app.route('/', employees);
-
-type AppType = typeof routes;
 
 app.get('/', (c) => {
   return c.text('Hello Hono!');
 });
 
-export { app, type AppType };
+export { app };

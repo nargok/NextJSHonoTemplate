@@ -1,1 +1,1 @@
-export * from './get-employees-usecase';
+export * from './employees-usecase';
