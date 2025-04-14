@@ -8,6 +8,8 @@ const querySchema = z.object({
   status: z.union([z.literal('active'), z.literal('inactive')]).optional(),
 });
 
+type QuerySchema = z.infer<typeof querySchema>;
+
 @injectable()
 export class EmployeeController {
   private app = new Hono();
@@ -22,8 +24,7 @@ export class EmployeeController {
 
   async getEmployees(context: Context) {
     try {
-      const data = context.req.valid('query');
-      console.log('data', data);
+      const data = context.req.query() as QuerySchema;
       const employees = await this.usecase.getEmployees(data);
 
       return context.json(employees, 200);
