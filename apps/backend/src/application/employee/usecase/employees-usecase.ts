@@ -1,13 +1,14 @@
 import { Employee } from '@/domain/model/employee';
 import { IEmployeeRepository } from '@/domain/repository/employee';
 import { EmployeeDto } from '..';
-
+import { inject, injectable } from 'tsyringe';
 type GetEmployeesCommand = Partial<Pick<Employee, 'status'>>;
 
-export class GetEmployeesUsecase {
-  constructor(private repository: IEmployeeRepository) {}
+@injectable()
+export class EmployeesUsecase {
+  constructor(@inject('EmployeeRepository') private repository: IEmployeeRepository) {}
 
-  async execute(command: GetEmployeesCommand) {
+  async getEmployees(command: GetEmployeesCommand) {
     const employees = await this.repository.findMany(command);
 
     return employees

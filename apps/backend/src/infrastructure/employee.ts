@@ -1,6 +1,8 @@
 import { Employee } from '@/domain/model/employee';
 import { IEmployeeRepository } from '@/domain/repository/employee';
+import { injectable } from 'tsyringe';
 
+@injectable()
 export class EmployeeRepository implements IEmployeeRepository {
   findMany = async ({ status }: Partial<Pick<Employee, 'status'>>) => {
     const mockEmployees: Employee[] = [
